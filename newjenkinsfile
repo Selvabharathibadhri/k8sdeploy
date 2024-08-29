@@ -1,0 +1,47 @@
+
+pipeline {
+    agent any
+
+    environment {
+        dockerimagename = "selvabharathibadhri/nodeapp"
+        dockerImage = ""
+        KUBECONFIG = '/home/ubuntu/.kube/config'
+    }
+	
+    stages {
+        stage('git') {
+            steps {
+                git branch: 'master', url: 'https://github.com/Selvabharathibadhri/k8sdeploy.git'
+            }
+        }
+
+    stages {
+        stage('Build image') {
+            steps {
+                script {
+                    dockerImage = docker.build dockerimagename
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            environment {
+                registryCredential = 'dockerhublogin'
+            }
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+        stage('Deploying App to Kubernetes') {
+            steps {
+                script {
+                    sh '/home/ubuntu/bin/kubectl version --client'
+                    sh '/home/ubuntu/bin/kubectl apply -f deploymentservice.yml'
+                }
+            }
+        }
+    }
+}
