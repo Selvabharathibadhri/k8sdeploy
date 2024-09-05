@@ -2,15 +2,15 @@ provider "aws" {
   region = "ap-south-1"
 }
 
-# Step 1: Reference the existing IAM role and create an instance profile
+
 resource "aws_iam_instance_profile" "jenkins_instance_profile" {
   name = "jenkins_instance_profile"
-  role = "terraform"  # Use the existing IAM role named 'terraform'
+  role = "terraform"  
 }
 
-# Step 2: Launch the Jenkins EC2 instance and attach the instance profile
+
 resource "aws_instance" "jenkins_instance" {
-  ami           = "ami-0522ab6e1ddcc7055"  # Replace with the latest Ubuntu AMI for your region
+  ami           = "ami-0522ab6e1ddcc7055" 
   instance_type = "t2.medium"
   key_name      = "new"  # Use your existing key pair
 
@@ -60,7 +60,7 @@ resource "aws_instance" "jenkins_instance" {
               sudo service jenkins restart
               EOF
 
-  vpc_security_group_ids = ["sg-0519c88d491c653de"]  # Replace with your existing security group ID
+  vpc_security_group_ids = ["sg-0519c88d491c653de"]  
 }
 
 output "jenkins_url" {
